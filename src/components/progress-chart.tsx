@@ -16,8 +16,8 @@ interface ProgressChartProps {
   data: DataPoint[];
 }
 
-const CHART_HEIGHT = 160;
-const CHART_MARGIN = { top: 16, right: 16, bottom: 32, left: 48 };
+const CHART_HEIGHT = 200;
+const CHART_MARGIN = { top: 28, right: 16, bottom: 44, left: 52 };
 const DOT_RADIUS = 4;
 
 export function ProgressChart({ title, data }: ProgressChartProps) {
@@ -78,6 +78,7 @@ export function ProgressChart({ title, data }: ProgressChartProps) {
   if (data.length === 0) return null;
 
   const chartW = Dimensions.get('window').width - Spacing.three * 2 - Spacing.three * 2 - CHART_MARGIN.left - CHART_MARGIN.right;
+  const chartH = CHART_HEIGHT - CHART_MARGIN.top - CHART_MARGIN.bottom;
   const totalW = CHART_MARGIN.left + chartW + CHART_MARGIN.right;
   const textColor = theme.textSecondary;
   const lineColor = theme.textSecondary;
@@ -103,7 +104,7 @@ export function ProgressChart({ title, data }: ProgressChartProps) {
           <SvgText
             key={i}
             x={xl.x}
-            y={CHART_HEIGHT - 4}
+            y={CHART_HEIGHT - 18}
             fill={textColor}
             fontSize={10}
             textAnchor="middle"
@@ -111,9 +112,41 @@ export function ProgressChart({ title, data }: ProgressChartProps) {
             {xl.label}
           </SvgText>
         ))}
+        <SvgText
+          x={CHART_MARGIN.left + chartW / 2}
+          y={CHART_HEIGHT - 2}
+          fill={textColor}
+          fontSize={10}
+          textAnchor="middle"
+        >
+          Date
+        </SvgText>
+        <SvgText
+          x={12}
+          y={CHART_MARGIN.top + chartH / 2}
+          fill={textColor}
+          fontSize={10}
+          textAnchor="middle"
+          transform={`rotate(-90, 12, ${CHART_MARGIN.top + chartH / 2})`}
+        >
+          Weight
+        </SvgText>
         <Path d={path} fill="none" stroke={strokeColor} strokeWidth={2.5} strokeLinejoin="round" />
         {dots.map((d, i) => (
-          <Circle key={i} cx={d.cx} cy={d.cy} r={DOT_RADIUS} fill={strokeColor} />
+          <SvgText
+            key={i}
+            x={d.cx}
+            y={d.cy - DOT_RADIUS - 6}
+            fill={strokeColor}
+            fontSize={11}
+            fontWeight="700"
+            textAnchor="middle"
+          >
+            {d.weight}
+          </SvgText>
+        ))}
+        {dots.map((d, i) => (
+          <Circle key={`dot-${i}`} cx={d.cx} cy={d.cy} r={DOT_RADIUS} fill={strokeColor} />
         ))}
       </Svg>
     </View>
