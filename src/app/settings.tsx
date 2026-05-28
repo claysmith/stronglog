@@ -159,22 +159,26 @@ export default function SettingsScreen() {
             <ThemedText style={styles.hint}>
               These apply to any exercise without specific settings below.
             </ThemedText>
-            <View style={styles.defaultsGrid}>
-              <ThemedText style={styles.defaultsLabel}>Starting Wt</ThemedText>
+            <View style={styles.settingRow}>
+              <ThemedText style={styles.settingLabel}>Starting Weight</ThemedText>
               <NumInput
                 value={defaults.startingWeight}
                 onChange={(v) => setDefaults((d) => ({ ...d, startingWeight: v }))}
                 suffix="lbs"
                 theme={theme}
               />
-              <ThemedText style={styles.defaultsLabel}>Increment</ThemedText>
+            </View>
+            <View style={styles.settingRow}>
+              <ThemedText style={styles.settingLabel}>Increment</ThemedText>
               <NumInput
                 value={defaults.increment}
                 onChange={(v) => setDefaults((d) => ({ ...d, increment: v }))}
                 suffix="lbs"
                 theme={theme}
               />
-              <ThemedText style={styles.defaultsLabel}>Deload</ThemedText>
+            </View>
+            <View style={styles.settingRow}>
+              <ThemedText style={styles.settingLabel}>Deload</ThemedText>
               <NumInput
                 value={defaults.deloadAmount}
                 onChange={(v) => setDefaults((d) => ({ ...d, deloadAmount: v }))}
@@ -188,12 +192,12 @@ export default function SettingsScreen() {
             const e = exercises[name];
             if (!e) return null;
             return (
-              <ThemedView key={name} type="backgroundElement" style={styles.section}>
+              <ThemedView key={name} type="backgroundSelected" style={styles.section}>
                 <ThemedText type="subtitle" style={styles.sectionTitle}>
                   {name}
                 </ThemedText>
-                <View style={styles.defaultsGrid}>
-                  <ThemedText style={styles.defaultsLabel}>Starting Wt</ThemedText>
+                <View style={styles.settingRow}>
+                  <ThemedText style={styles.settingLabel}>Starting Weight</ThemedText>
                   <NumInput
                     value={e.startingWeight}
                     onChange={(v) =>
@@ -205,7 +209,9 @@ export default function SettingsScreen() {
                     suffix="lbs"
                     theme={theme}
                   />
-                  <ThemedText style={styles.defaultsLabel}>Increment</ThemedText>
+                </View>
+                <View style={styles.settingRow}>
+                  <ThemedText style={styles.settingLabel}>Increment</ThemedText>
                   <NumInput
                     value={e.increment}
                     onChange={(v) =>
@@ -217,7 +223,9 @@ export default function SettingsScreen() {
                     suffix="lbs"
                     theme={theme}
                   />
-                  <ThemedText style={styles.defaultsLabel}>Deload</ThemedText>
+                </View>
+                <View style={styles.settingRow}>
+                  <ThemedText style={styles.settingLabel}>Deload</ThemedText>
                   <NumInput
                     value={e.deloadAmount}
                     onChange={(v) =>
@@ -274,13 +282,12 @@ const styles = StyleSheet.create({
   },
   sectionTitle: { fontSize: 20, marginBottom: Spacing.one },
   hint: { fontSize: 13, opacity: 0.6, marginBottom: Spacing.one },
-  defaultsGrid: {
+  settingRow: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
     alignItems: 'center',
-    gap: Spacing.two,
+    justifyContent: 'space-between',
   },
-  defaultsLabel: { fontSize: 14, fontWeight: '600', width: 80 },
+  settingLabel: { fontSize: 15, fontWeight: '600' },
   inputRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.one },
   input: {
     borderWidth: 1,

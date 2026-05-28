@@ -11,6 +11,7 @@ import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { BottomTabInset, MaxContentWidth, Spacing } from '@/constants/theme';
 import { useWorkout } from '@/context/workout-context';
+import { useColorSchemeContext } from '@/context/color-scheme-context';
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -231,10 +232,11 @@ function ActiveWorkoutView() {
 
 function StartScreen() {
   const { state, startWorkout } = useWorkout();
+  const { colorScheme } = useColorSchemeContext();
 
   return (
     <View style={styles.startContainer}>
-        <ThemedText type="title">StrongLog</ThemedText>
+        <ThemedText type="title" style={[styles.startTitle, { color: colorScheme === 'dark' ? '#e74c3c' : '#000000' }]}>StrongLog Workout Tracker</ThemedText>
       <ThemedText style={styles.startSubtitle}>
         {state.retryWorkout
           ? `Retry Workout ${state.nextWorkoutType}`
@@ -364,6 +366,7 @@ const styles = StyleSheet.create({
     gap: Spacing.three,
     padding: Spacing.four,
   },
+  startTitle: { fontSize: 32, lineHeight: 38, textAlign: 'center' },
   startSubtitle: { fontSize: 22, fontWeight: '600' },
   startInfo: { fontSize: 15, opacity: 0.7, textAlign: 'center' },
   startButton: {
