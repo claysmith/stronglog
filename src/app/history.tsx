@@ -97,6 +97,42 @@ function WorkoutHistoryCard({ item }: { item: CompletedWorkout }) {
   );
 }
 
+function PRSection() {
+  const { state } = useWorkout();
+  const prs = useMemo(() => {
+    const records: Record<string, { weight: number; date: string }> = {};
+    for (const workout of state.history) {
+      for (const ex of workout.exercises) {
+        const allCompleted = ex.sets.every((s) => s.completed);
+        if (!allCompleted) continue;
+        const prev = records[ex.name];
+        if (!prev || ex.weight > prev.weight) {
+          records[ex.name] = { weight: ex.weight, date: workout.date };
+        }
+      }
+    }
+    return records;
+  }, [state.history]);
+
+  const names = Object.keys(prs);
+  if (names.length === 0) return null;
+
+  return (
+    <ThemedView type="backgroundElement" style={styles.prSection}>
+      <ThemedText type="subtitle" style={styles.prSectionTitle}>
+        Personal Records
+      </ThemedText>
+      {names.map((name) => (
+        <View key={name} style={styles.prRow}>
+          <ThemedText style={styles.prName}>{name}</ThemedText>
+          <ThemedText style={styles.prValue}>{prs[name].weight} lbs</ThemedText>
+          <ThemedText style={styles.prDate}>{formatDate(prs[name].date)}</ThemedText>
+        </View>
+      ))}
+    </ThemedView>
+  );
+}
+
 function ChartSection() {
   const { state } = useWorkout();
   const charts = useMemo(() => {
@@ -149,7 +185,7 @@ export default function HistoryScreen() {
             data={history}
             keyExtractor={(_, i) => String(i)}
             renderItem={({ item }) => <WorkoutHistoryCard item={item} />}
-            ListHeaderComponent={<ChartSection />}
+            ListHeaderComponent={<View style={styles.listHeader}><PRSection /><ChartSection /></View>}
             contentContainerStyle={styles.listContent}
           />
         )}
@@ -210,10 +246,23 @@ const styles = StyleSheet.create({
   },
   setDotDone: { backgroundColor: '#2ecc71' },
   setDotFail: { backgroundColor: '#e74c3c' },
+  listHeader: { gap: Spacing.three },
+  prSection: {
+    borderRadius: 12,
+    padding: Spacing.three,
+  },
+  prSectionTitle: { fontSize: 20, marginBottom: Spacing.two },
+  prRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 4,
+  },
+  prName: { fontSize: 15, fontWeight: '600', flex: 1 },
+  prValue: { fontSize: 16, fontWeight: '800', marginRight: Spacing.two },
+  prDate: { fontSize: 13, opacity: 0.6, fontVariant: ['tabular-nums'] },
   chartSection: {
     borderRadius: 12,
     padding: Spacing.three,
-    marginBottom: Spacing.three,
   },
   chartSectionTitle: { fontSize: 20, marginBottom: Spacing.two },
   emptyContainer: {
