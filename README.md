@@ -1,56 +1,107 @@
-# Welcome to your Expo app 👋
+# StrongLog Workout Tracker
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A simple strength training tracker for linear progression programs (e.g. Starting Strength). Built with Expo SDK 56.
 
-## Get started
+## Stack
 
-1. Install dependencies
+- **Expo SDK 56** · **React Native 0.85** · **React 19** · **TypeScript 6**
+- **expo-router** — file-based tab navigation (Workout, History, Settings)
+- **AsyncStorage** — local-only persistence (no backend)
+- **react-native-reanimated** — animations
+- **react-native-svg** — progress charts
 
-   ```bash
-   npm install
-   ```
+## Project Structure
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```
+src/
+├── app/                    # expo-router screens
+│   ├── _layout.tsx         # Root layout: theme → workout context → tabs
+│   ├── index.tsx           # Workout screen (start/active workout)
+│   ├── history.tsx         # History with PRs and progress charts
+│   └── settings.tsx        # Global and per-exercise settings
+├── components/             # Reusable UI components
+│   ├── progress-chart.tsx  # SVG sparkline chart per exercise
+│   ├── themed-text.tsx     # Themed text wrapper
+│   ├── themed-view.tsx     # Themed view wrapper
+│   ├── app-tabs.tsx        # Native tab bar
+│   └── ...
+├── context/
+│   ├── workout-context.tsx # Central state: active workout, progression, history
+│   └── color-scheme-context.tsx
+├── constants/
+│   └── theme.ts           # Colors, spacing, fonts
+├── hooks/
+│   └── use-theme.ts       # Returns resolved theme colors
+└── types/
+    └── workout.ts          # All type definitions
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## How It Works
 
-### Other setup steps
+**Workouts** alternate between two types:
+- **Workout A**: Squat (5×5), Bench Press (5×5), Barbell Row (5×5)
+- **Workout B**: Squat (5×5), Overhead Press (5×5), Deadlift (5×5)
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+**Progression** is automatic — complete all 5 sets and the weight increases by the increment. Fail any set and the exercise deloads. The next workout type auto-alternates (unless failed, in which case it retries the same type).
 
-## Learn more
+**Personal Records** are tracked per exercise — the highest weight where all sets were completed, shown on the History tab alongside SVG progress charts.
 
-To learn more about developing your project with Expo, look at the following resources:
+All data is stored locally via AsyncStorage.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Getting Started
 
-## Join the community
+### Prerequisites
 
-Join our community of developers creating universal apps.
+- Node.js 20+
+- Xcode 16+ (for iOS)
+- CocoaPods (`gem install cocoapods`)
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+### Install & Run
+
+```sh
+npm install
+npx pod-install          # Install CocoaPods dependencies
+npx expo run:ios         # Build and run on iOS simulator
+```
+
+### Versioned Docs
+
+This project targets Expo SDK 56. Always use the [v56 docs](https://docs.expo.dev/versions/v56.0.0/) — newer Expo docs may reference APIs that aren't available in this version.
+
+### Full Clean Rebuild
+
+```sh
+rm -rf node_modules ios/Pods ios/build .expo package-lock.json
+npm install
+npx pod-install
+npx expo run:ios
+```
+
+### Development Build on Device
+
+```sh
+eas build --platform ios --profile development
+```
+
+## Building for App Store
+
+```sh
+eas build --platform ios --profile production
+eas submit --platform ios --profile production
+```
+
+Then complete metadata (description, screenshots) in [App Store Connect](https://appstoreconnect.apple.com).
+
+## Configuration
+
+| Setting | Default | Description |
+|---|---|---|
+| Starting Weight | 45 lbs | Initial weight for all exercises |
+| Increment | 5 lbs | Weight increase on successful workout |
+| Deload Amount | 10 lbs | Weight decrease on failed workout |
+
+Per-exercise overrides are available in Settings.
+
+## License
+
+© 2026 Clay Smith
